@@ -1,0 +1,229 @@
+% -*- TeX:SI -*-
+% slovene sub-mode for spell check
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% LaTeX predloga za zaključna dela
+% Univerza v Ljubljani, Fakulteta za elektrotehniko
+% Zbral in uredil: Roman Kamnik, junij 2013
+% Dopolnil: Sebastjan Šlajpah (2013), Sašo Tomažič (2013), Peter Miklavčič (2019)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4paper,twoside,openright,12pt,slovene]{book}
+\usepackage[pdftex]{UNI-LJ-FE-Diploma} % stil zaključnega dela UL FE
+\usepackage[utf8]{inputenc} % predloga uporablja standardno kodiranje Unicode UTF-8, ki podpira šumnike
+\usepackage[greek,english,slovene]{babel} % seznam uporabljenih jezikov (zadnji na seznamu je primarni)
+
+% PDF/A %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Več o PDF/A v LaTeX-u: https://www.mathstat.dal.ca/~selinger/pdfa/
+\usepackage{filecontents}
+\begin{filecontents*}{\jobname.xmpdata}
+    \Title{Uporaba strojnega vida za izboljšanje kolaborativne robotike} % Mora biti enak kot je v prijavi teme!
+    \Author{Gašper Šavle} % Mora biti enak kot na naslovnici!
+\end{filecontents*}
+\usepackage[a-1b]{pdfx}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% LaTeX PAKETI %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Kompakten pregled LaTeX ukazov je dostopen na https://en.wikibooks.org/wiki/Category:Book:LaTeX
+% Navodila posameznih uporabljenih paketov so dostopna na https://www.ctan.org
+
+% Dodatni simboli
+\usepackage{textcomp}                               % dodatni simboli (kot npr. €)
+\usepackage{gensymb}                                % dodatni simboli \de­gree, \cel­sius, \pert­hou­sand, \mi­cro, \ohm
+\newcommand{\uppi}{\textrm{\greektext p\latintext}} % velika grška črka P z \uppi, alternativa simbolu \Pi
+
+% Osnovno oblikovanje
+\hypersetup{unicode,hidelinks,breaklinks,hyperindex} % dodatne možnosti hiperpovezav
+\usepackage[normalem]{ulem}                          % podčrtavanje in prečrtavanje teksta
+\usepackage{float}                                   % dodatne možnosti oblikovanja objektov
+\usepackage{enumitem}                                % dodatne možnosti oblikovanja seznamov
+
+% Dodatno oblikovanje
+%\zamaknirobsodihstrani{0mm} % dodatna prilagoditev levega roba sodih strani za dvostranski tisk
+%\usepackage{dcolumn}        % poravnava po decimalnih mestih v tabelah
+%\usepackage{longtable}      % večstranske tabele
+%\usepackage{caption}        % dodatne možnosti označevanja objektov
+%\usepackage{rotating}       % vretenje objektov, strani, ipd.
+
+% Matematična orodja
+\usepackage{mathtools} % http://mirrors.ctan.org/macros/LaTeX/contrib/mathtools/mathtools.pdf
+\usepackage{bm}        % ukaz za odebeljeni tisk \bm v matematičnih okoljih
+%\usepackage{cancel}   % ukaz za prečrtavanje \cancel v matematičnih okoljih
+
+% Grafična orodja
+\usepackage{graphicx}                 % vključevanje bitnih slik z ukazom \includegraphics
+\usepackage{grffile}                  % podpora presledkom pri ukazu \includegraphics
+%\usepackage{tikz}                    % paket TikZ za risanje (npr. blokovnih shem, diagramov poteka, itd.)
+%\usetikzlibrary{calc,shapes,arrows}  % dodatne možnosti paketa TikZ
+%\usepackage{tikzscale}               % skaliranje risb
+%\usepackage[smartlabels]{circuitikz} % risanje shem vezij
+%\usepackage{pgfplots}                % paket PGFPlots za risanje grafov, tudi iz CSV in podobnih datotek
+%\usepgfplotslibrary{polar,external}  % dodatne možnosti paketa PGFPlots
+%\usepackage{tikz-3dplot}             % 3D risanje
+% Primeri: http://texample.net , http://pgfplots.net/tikz/examples , http://pgfplots.sourceforge.net/gallery.html
+
+% Vključevanje datotek
+\usepackage{pdfpages} % vključevanje PDF datotek z ukazom \includegraphics
+\usepackage{epstopdf} % vključevanje EPS datotek z ukazom \includegraphics
+\usepackage{listings} % orodja za izpisovanje programske kode
+\lstset{              % nastavitve orodja za izpisovanje programske kode
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    numbers=left,
+    numberstyle=\scriptsize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{unilj},
+    stringstyle=\color{olive},
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% DEKLARACIJE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\naslov{Uporaba strojnega vida za izboljšanje kolaborativne robotike} % Mora biti enak kot je v prijavi teme!
+\avtor{Gašper Šavle} % Mora se ujemati s \Title pri metapodatkih PDF/A!
+\mentor{Prof.Dr. Aleš Ude}
+%\somentor{Naziv, ime in priimek somentorja}
+\date{Ljubljana, \the\year}
+\univerza{Univerza v Ljubljani}
+\definecolor{unilj}{cmyk}{0.00, 0.94, 0.94, 0.06} % barva Univerze v Ljubljani
+
+% Potrebno je paziti, da je izbrana prava kombinacija tipa dela in sodelujočih fakultet glede na študijski program!
+\delo{Diplomsko delo\\~\\Univerzitetni študijski program prve stopnje Elektrotehnika}
+%\delo{Diplomsko delo\\~\\Univerzitetni študijski program prve stopnje Multimedija}
+%\delo{Diplomsko delo\\~\\Visokošolski strokovni študijski program\\prve stopnje Aplikativna elektrotehnika}
+%\delo{Diplomsko delo\\~\\Visokošolski strokovni študijski program\\prve stopnje Multimedijske komunikacije}
+%\delo{Magistrsko delo\\~\\Magistrski študijski program druge stopnje Elektrotehnika}
+%\delo{Magistrsko delo\\~\\Magistrski študijski program druge stopnje Uporabna statistika}
+\fakulteta{Fakulteta za elektrotehniko}
+%\fakulteta{Fakulteta za elektrotehniko,\\Fakulteta za računalništvo in informatiko} % Za program Multimedija
+%\fakulteta{Fakulteta za elektrotehniko, Biotehniška fakulteta,\\Ekonomska fakulteta, Fakulteta za družbene vede,\\Fakulteta za matematiko in fiziko, Fakulteta za\\računalništvo in informatiko, Medicinska fakulteta} % Za program Uporabna statistika
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% DOKUMENT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\frontmatter
+
+\selectlanguage{slovene}
+
+%******************************* NASLOVNICA ************************************
+\maketitle
+
+%******************************* ZAHVALA ***************************************
+\zahvala
+V zahvali se kandidat lahko zahvali mentorju in poimensko tudi vsem sodelavcem in prijateljem, ki so pomagali in prispevali pri delu v laboratoriju, na računalniku, v delavnici, pri tehnični izdelavi dela ali drugje.
+(najverjetneje je na koncu ne bom mel ampak bomo videli kolikomateriala uspem nabrat)
+
+%******************************* POVZETEK IN KLJUČNE BESEDE ********************
+\povzetek
+Kolaborativna robotika je vedno hitreje rastoca podzvrst industrijske robotike, do leta 2027 anj bi trg kolaborativne robotike dosegel vrednost 7,5 milijarde ameriskih dolarjev, predstavljal pa naj bi kar 29\%
+trga industrijske robotike.
+To eksplozivno rast poganjajo stevilni aktualni dejavniki, kot so pomanjkanje visoko usposobljenih delavcev, vedno vecja potreba po prilagodljivosti v avtomatiki in vedno manjse ter bolj raznolike serije izdelkov, ki se izdelujejo v industriji.
+
+Sodelujoci roboti se od standardnih industrijskih robotov razlikujejo po zgradbi, saj so naceloma sestavljeni iz zaobljenih, ponekod celo mehkih clenov, ki so ob stiku s clovekom manj nevarni, kot njihove toge in oglate alternative. Druga najvecja razlika je vkljucitev senzorjev navora v sklepe robota, iz podatkov, ki jih robotski krmilnik razbere iz teh senzorjev je moc izracunati silo na posamezen sklep robota. Ti senzorji sile predstavljajo varnostno funkcijo zaznavanja trcenja med robotom in uporabnikom, ali robotom in zunanjimi objekti.
+
+V diplomskem delu bom predstavil svojo izpeljavo uporabe strojnega vida za preprecevanje trcenj med clovekom in robotom, za kar sem uporabljal Intel Realsense stereoskopsko kamero in Franka Emika Panda robota. Uporabil sem program za zaznavanje drze in polozaja cloveka AlphaPose, s katerim sem pridobil podatke o polozaju posameznega sklepa cloveka v koordinatnem sistemu kamere. Podatke sem nato s transformacijsko matriko preslikal v izvorni koordinatni sistem "world", v katerem je definiran tudi polozaj robotov. Ko robotski kmilnik zazna vnaprej doloceno razdaljo med robotom in clovekom, za katero je bilo razsojeno, da signalizira nevernost trcenja, upocasni gibanje robota na hitrost, ob kateri trk s clovekom ne bi bil nevaren.
+
+\textbf{TODO:} 
+- opis trenutnih resitev (glej bookmarks/diplomska) in citati iz teh clankov, oceni pomembnost za diplomsko
+- rezultati in zakljucki iz rezultatov
+
+\kljucnebesede
+Sodelujoci roboti, zaznavanje drze, robotski krmilnik, AlphaPose, transformacijska matrika, koordinatni sistem
+
+\tableofcontents
+
+%******************************* SEZNAM SLIK, SEZNAM TABEL *********************
+\seznamslik
+\seznamtabel
+
+%******************************* SEZNAM SIMBOLOV *******************************
+\seznamsimbolov
+V pričujočem zaključnem delu so uporabljene naslednje veličine in simboli:
+
+\begin{center}
+    \begin{tabular}{*{4}{l}} \hline
+        \multicolumn{2}{c}{\bf{Veličina / oznaka}}           & \multicolumn{2}{c}{\bf{Enota}} \\ \hline
+        Ime                & Simbol                          & Ime      & Simbol              \\ \hline
+        čas                & $t$                             & sekunda  & s                   \\
+        frekvenca          & $f$                             & Hertz    & Hz                  \\
+        tlak               & $p$                             & Pascal   & Pa                  \\
+        sila vzgona        & $\textbf{\textit{F}}_\text{vz}$ & Newton   & N                   \\
+        gostota            & $\rho$                          & -        & kg/m$^3$            \\
+        masa               & $m$                             & kilogram & kg                  \\
+        vhodna napestost   & $U_\text{vh}$                   & volt     & V                   \\
+        Jacobijeva matrika & $\mathbf{J}$                    & -        & -                   \\ \hline
+    \end{tabular}
+\end{center}
+
+Pri čimer so vektorji in matrike zapisani s poudarjeno pisavo. Natančnejši pomen simbolov ter njihovih indeksov je razviden iz ustreznih slik ali pa je pojasnjen v spremljajočem besedilu, kjer je simbol uporabljen.
+
+\mainmatter
+
+%******************************* UVOD ******************************************
+\chapter{Uvod} \label{uvod}
+
+Uvod v zaključno delo ima namen, da uvede bralca v tematiko zaključnega dela. V njem kandidat razčleni zahteve in cilje zaključnega dela, po literaturi povzame znane rešitve in oceni njihov pomen za zaključno delo. Sklicevanje na literaturo se v besedilu označi s številko v oglatem oklepaju, ki jo ima ta v seznamu uporabljenih virov, in po potrebi navede strani, npr. \cite{miklavcic2010objavljanje} ali \cite[stran 520-534]{juznic1992diplomska}.
+
+Obstojece resitve:
+V industriji se za zaznavanja cloveka v delovnem prostoru robota (ali katerekoli naprave) najpogosteje uporablja svetlobne zavese ali ultrazvocne senzorje prisotnosti/razdalje. Tezava obojih pristopov je kompleksnost prvotne nastavitve takega sistema in njegova fleksibilnost. Npr. da svetlobna zavesa pravilno deluje morajo biti vsi sprejemniki in oddajniki popolnoma poravnani, dobimo pa le binarni izhod, ki nam pove, ali se nekaj trenutno nahaja znotraj ravnine, ki jo svetlobna zavesa tvori med svojima polovicama. To nam da zelo omejeno informacijo o trenutni lokaciji cloveka, kar nam tudi zelo omeji mozne odzive. Praviloma se ob motnji v svetlobni zavesi ustavi postroj, nakar sistem potrebuje uporabnisko interakcijo za ponovni zacetek normalnega delovanja postroja. Uporaba ultrazvocnih senzorjev oddaljenosti, lahko dobimo vecstopenjsko informacijo o blizini dolocenega objekta, vendar moramo tocno vedeti, kje bi se ta objekt (v tem primeru clovek) lahko nahajal. Sistem se ne zaveda, kaj je objekt, cigar razdaljo merimo, kar nam lahko predstavi motnje v meritvah, ki pa vodijo do nezanesljivega delovanje.
+
+Prednost uporabe strojnega vida napram tradicionalnim resitvam, kot so svetlobne zavese ali ultrazvocni merilniki razdalje je informacija o tem, kaj tocno se nahaja v delavnem prostoru in nasplosno vecji nabor podatkov, na bazi katerih lahko sprogramiramo kompleksnejse odzive.
+
+\chapter{Opis sestavnih delov resitve} \label{opis_komponent}
+\section{Robotski operacijski sistem (ROS)} \label{ROS}
+ROS (Robot Operating System) je odprtokodni operacijski sistem, zasnovan za uporabo v robotskih aplikacijah. Deluje na računalnikih z operacijskim sistemom Linux in je zasnovan na distribucijski arhitekturi. Torej, da je zasnovan za delovanje na različnih računalnikih, ki lahko delujejo, kot povezana celota - sistem. Ker je moja tema diplomske naloge nadgradnja obstojecega projekta na IJS, kjer sem opravljal obvezno prakso, sem moral resitev narediti kompatibilno z njihovo obstoječo arhitekturo projekta, kjer se vse nahaja v Docker datotekah, oz. Dockerfile-ih. Torej sem tudijaz svojo resitev zgradil znotraj Docker containerja, kar je tudi sicer priporocljivo v praksi, zaradi lazjega upravljanja s knjiznicami in gonilniki. 
+
+Arhitekturo ROS lahko razumemo na dveh razlicnih nivojih, ki ju lahko poenostavimo v:
+\begin{enumerate}
+    \item  \label{file_lvl} \textbf{Datotecni (Filesystem) nivo} 
+    
+    Nivo datotečnega sistema je najnizji nivo operacijskega sistema, opisuje njegovo interno strukturo in je namenjen centralizaciji gradnikov projekta, vendar obenem zadostni fleksibilnosti, da je moč decentralizirati potrebe vsakega gradnika. ROS operacijski sistem je razdeljen v mape, ki vsebujejo datoteke, v katerih je opisana njihova funkcija. Funkcije datotek pa ločimo na:
+        \begin{itemize}
+            \item \textbf{Pakete (packages):} Najnižje-nivojska komponenta ROS, vsebuje minimalno strukturo, ki je potrebna za stvarjenje programa znotraj operacijskega sistema. Te strukture so lahko procesi ali konfiguracijske datoteke. Vsak paket potrebuje svoj \textit{manifest}, ki vsebuje informacije o paketu, kot npr. licence ali knjiznice, potrebne za delovanje.
+
+            \item \textbf{Metapakete (metapackages):} Povezovalne strukture paketov, ki jih uporabljamo, ko hocemo vec paketov zbrati v vzajemno delujoco strukturo. Ta mapa vsebuje le datoteko \verb|package.xml|, ki vsebuje reference na pakete, ki jih zelimo skupinsko klicati. Metapaketi, kot osnovni paketi, prav tako potrebujejo svoj \textit{manifest}.
+
+            \item \label{ros_msg} \textbf{Sporocila (messages):} Predstavljajo informacije, ki jih procesi posiljajo in prejemajo med sabo, ROS vsebuje vec standardnih tipov sporocil, mozna pa je nadgradnja z namenskimi tipi, ki jih lahko definiramo sami.
+
+            \item \textbf{Storitve (services):} So nadgradnja sporocil [Glej: \ref{ros_msg}] in omogocajo poziv/odgovor (request/response) nacin komunikacije med vozlisci.[Glej: \ref{ros_node}] V sporocilu na katerem je zgrajena storitev so opisani vhodni in izhodni parametri storitve. Namenjene so izvajanju specificnih nalog ob klicu/na zahtevo
+        \end{itemize}
+
+ \item \label{block_lvl} \textbf{Blokovni nivo} 
+ 
+ Nivo blokovne sheme ROS je nacin abstrakcije arhitekture ROS v visjenivojsko, uporabniku prijaznejso arhitekturo. Ta nivo je sestavljen iz skupka vseh procesov, kjer je vsak predstavljen, kot vozlisce, vsako vozlisce v tem omrezju procesov lahko dostopa do celotnega omrezja in komunicira s katerimkoli posameznim vozliscem. Na tem nivoju lahko procese locimo na:
+    \begin{itemize}
+        \item \label{ros_node}\textbf{Vozlišča (nodes):} Predstavljajo procese, kjer se obdelujejo podatki. Vsako vozlišče ima unikatno ime oziroma identifikator, ki ga določi programer ob inicializaciji vozlišča. Ta identifikator se uporablja za naslavljanje vozlišč ob komunikaciji med njimi. Vozlišča lahko komunicirajo prek tem ali storitev. Procese izvajamo v ločenih vozliščih za čim manjšo možnost kontaminacije, ko pride do napak ali neučinkovitosti v delovanju sistema. Tako kar se da preprečimo, da bi napaka v enem vozlišču okrnila delovanje ostalih.
+
+        \item \label{ros_topic} \textbf{Teme (topics):} So asinhrona vodila, prek katerih vozlisca prenasajo podatke med sabo. So 'javna' domena, torej lahko prek njih komuncirajo vozlisca, ki niso neposredno povezana med sabo, kar pomeni, da sta posiljanje in branje podatkov lahko xasovno neodvisna. Tema ima lahko mnogo odjemalcev (subscribers) in mnogo ponudnikov (publishers), vendar lahko vecje stevilo ponudnikov na enem vodilu vodi do konfliktov. Ta sporocila se lahko posiljajo po TCP/IP ali UDP protokolu, izbiramo ju glede na potrebe aplikacije.
+
+        \item \label{ros_service} \textbf{Storitve (services):} Tako kot teme, so tudi storitve mehanizem za komunikacijo med vozlisci. Vendar se mehanizma razlikujeta glede na namen in izvedbo. ROS service je namrec sinhron mehanizem za komunikacijo, kjer vozlisce zahteva informacijo od tocno dolocenega vozlisca in po poslanem pozivo (request) caka na odgovor, ki ga v obliki sporocila prejmemo, ko je klicana storitev opravljena.
+
+        \item \label{ros_master} \textbf{Master:} Je odgovoren za imenovanje in ustvarjanje storitev in vseh ostalih vozlisc znotraj ROS operacijskega sistema. Usmerja pretok informacij med ponudniki in odjemalci. Njegova glavna vloga je omogocanje vozliscem, da se lahko med sabo najdejo in omogoca peer to peer [Glej: Razlaga pojmov - \ref{p_2_p}]. Prav tako pa upravlja s streznikom parametrov (parameter server) [Glej: \ref{ros_param}]
+
+        \item \label{ros_param} \textbf{Streznik parametrov (parameter server):} Je slovar, dostopen celotnemu ROS sistemu, vozlisca ga uporabljajo za hranjenje, deljenje in dostop do parametrov med delovanjem. Vsak parameter je shranjen pod svojim unikatnim imenom. ROS sistemu omogocajo ucinkovito deljenje skupnih nastavitev in posledicno dosti enostavnejse prilagajanje razlicnim aplikacijam.
+    \end{itemize}
+\end{enumerate}
+
+\section{Program za zaznavanje položaja človeka - AlphaPose} \label{AlphaPose}
+AlphaPose je sistem, zmozen natancnega sledenja položaja celotnega človeškega telesa v realnem času \cite{AlphaPose_clanek}. Na področju detekcije položaja človeškega telesa je ta sistem uvedel 2 novi tehniki:
+    \begin{itemize}
+        \item  Simetrična integralna regresija (Symmetric Integral Keypoint Regression): Integralna regresija je metoda prikaza izhoda konvolucijske mreže [Glej: Razlaga pojmov \ref{cnn}], ki so jo avtorji v članku \cite{Sun_2018_ECCV} implementirali, kot zamenjavo za metodo "heatmap" [Glej: Razlaga pojmov \ref{heatmap}]. Ker ima metoda "heatmap" dva izstopajoča problema:
+        \begin{enumerate}
+            \item \textbf{Neodvedljivost izhoda:} "Heatmap" način predstavitve distribucije verjetnosti razredov na slikah ni zvezen in posledično ni odvedljiv. "Heatmap" je diskretna distribucija verjetnosti, saj konvolucijske nevronske mreže (CNN) podajo izhod v obliki 2-D matrike verjetnosti. \cite{Sun_2018_ECCV}
+
+            \item \textbf{Kvantizacijska napaka:} je pogojevana z načinom delovanja CNN in je neizogibna pri diskretizaciji. Kvantizacijska napaka rezultira v izgubi informacij, ki se lahko manifestira, kot slabo doloceni robovi objektov. \cite{Sun_2018_ECCV}
+        \end{enumerate}
+        Inregralna regresija je postopek predvidevanja lokacij sklepov, ki izvira iz "heatmap" predstavitve izhoda CNN. Predstavljen je kot, z verjetnostjo vsake lokacije, utežen integral vseh lokacij na "heatmap" grafu verjetnosti. Postopek poseduje prednosti direktnega pristopa s "heatmap" grafom in pristopa z regresijo \ref{regresija}, vendar ne poseduje slabih lastnosti obeh pristopov: racunska zahtevnost regresije, neodvodljivost "heatmap" grafa. \cite{Sun_2018_ECCV}. Simetrična integralna regresija je izboljšava integralne regresije, kjer nevronska mreza uposteva prostorsko simetrijo ključnih točk (sklepov) človeškega telesa. V članku \cite{AlphaPose_clanek} je navedena, kot prva metoda na bazi regresije, ki je enako natancna, kot metode s heatmap grafom, ob tem pa izničila kvantizacijsko napako te metode.
+
+        \item
+        
+    \end{itemize}
+
+
+\chapter{Razlaga pojmov} \label{razlaga_pojmov}
+\begin{itemize}
+    \item[Heatmap:] \label{heatmap} je nacin vizualizacije podrocja na sliki, ki ga konvolucijska nevronska mreza (CNN) povezuje s specificnim izhodnim razredom. Znan je tudi pod okrajšavo CAM (Class Activation Mapping), uporablja se za, človeku - prijazno, vizualizacijo distribucije verjetnosti, da je na sliki objekt dolocenega razreda razpoznavanja. \cite{heatmap_website}
+
+    \item[Konvolucijske nevronske mreze:] \label{cnn}so vrsta nevronske mreže, namenjene pretežno za obdelavo slik. Glavni cilj konvolucijskih nevronskih mrež je naučiti se lokalne in globalne značilnosti vhodnih slik, kar omogoča, da lahko mreža klasificira, zaznava in segmentira objekte v slikah. Konvolucijske nevronske mreže uporabljajo konvolucijske plasti za izvajanje filtriranja vhodnih podatkov z matričnimi filtri (kernel). Filtri se običajno uporabljajo za zaznavanje robov, tekstur in drugih vizualnih značilnosti, ki so pomembne za prepoznavanje objektov na sliki. \cite{cnn_clanek}
+
+    \item[Regresija:] #TODO
+\end{itemize}
+
+\end{document}
