@@ -31,7 +31,7 @@
 \newcommand{\uppi}{\textrm{\greektext p\latintext}} % velika grška črka P z \uppi, alternativa simbolu \Pi
 
 % Osnovno oblikovanje
-\hypersetup{unicode,hidelinks,breaklinks,hyperindex} % dodatne možnosti hiperpovezav
+% dodatne možnosti hiperpovezav
 \usepackage[normalem]{ulem}                          % podčrtavanje in prečrtavanje teksta
 \usepackage{float}                                   % dodatne možnosti oblikovanja objektov
 \usepackage{enumitem}                                % dodatne možnosti oblikovanja seznamov
@@ -85,9 +85,9 @@
 \definecolor{unilj}{cmyk}{0.00, 0.94, 0.94, 0.06} % barva Univerze v Ljubljani
 
 % Potrebno je paziti, da je izbrana prava kombinacija tipa dela in sodelujočih fakultet glede na študijski program!
-\delo{Diplomsko delo\\~\\Univerzitetni študijski program prve stopnje Elektrotehnika}
+%\delo{Diplomsko delo\\~\\Univerzitetni študijski program prve stopnje Elektrotehnika}
 %\delo{Diplomsko delo\\~\\Univerzitetni študijski program prve stopnje Multimedija}
-%\delo{Diplomsko delo\\~\\Visokošolski strokovni študijski program\\prve stopnje Aplikativna elektrotehnika}
+\delo{Diplomsko delo\\~\\Visokošolski strokovni študijski program\\prve stopnje Aplikativna elektrotehnika}
 %\delo{Diplomsko delo\\~\\Visokošolski strokovni študijski program\\prve stopnje Multimedijske komunikacije}
 %\delo{Magistrsko delo\\~\\Magistrski študijski program druge stopnje Elektrotehnika}
 %\delo{Magistrsko delo\\~\\Magistrski študijski program druge stopnje Uporabna statistika}
@@ -162,7 +162,13 @@ Pri čimer so vektorji in matrike zapisani s poudarjeno pisavo. Natančnejši po
 Uvod v zaključno delo ima namen, da uvede bralca v tematiko zaključnega dela. V njem kandidat razčleni zahteve in cilje zaključnega dela, po literaturi povzame znane rešitve in oceni njihov pomen za zaključno delo. Sklicevanje na literaturo se v besedilu označi s številko v oglatem oklepaju, ki jo ima ta v seznamu uporabljenih virov, in po potrebi navede strani, npr. \cite{miklavcic2010objavljanje} ali \cite[stran 520-534]{juznic1992diplomska}.
 
 Obstojece resitve:
-V industriji se za zaznavanja cloveka v delovnem prostoru robota (ali katerekoli naprave) najpogosteje uporablja svetlobne zavese ali ultrazvocne senzorje prisotnosti/razdalje. Tezava obojih pristopov je kompleksnost prvotne nastavitve takega sistema in njegova fleksibilnost. Npr. da svetlobna zavesa pravilno deluje morajo biti vsi sprejemniki in oddajniki popolnoma poravnani, dobimo pa le binarni izhod, ki nam pove, ali se nekaj trenutno nahaja znotraj ravnine, ki jo svetlobna zavesa tvori med svojima polovicama. To nam da zelo omejeno informacijo o trenutni lokaciji cloveka, kar nam tudi zelo omeji mozne odzive. Praviloma se ob motnji v svetlobni zavesi ustavi postroj, nakar sistem potrebuje uporabnisko interakcijo za ponovni zacetek normalnega delovanja postroja. Uporaba ultrazvocnih senzorjev oddaljenosti, lahko dobimo vecstopenjsko informacijo o blizini dolocenega objekta, vendar moramo tocno vedeti, kje bi se ta objekt (v tem primeru clovek) lahko nahajal. Sistem se ne zaveda, kaj je objekt, cigar razdaljo merimo, kar nam lahko predstavi motnje v meritvah, ki pa vodijo do nezanesljivega delovanje.
+V industriji se za zaznavanja cloveka v delovnem prostoru robota (ali katerekoli naprave) najpogosteje uporablja svetlobne zavese \ref{svetlobna_zavesa} ali ultrazvocne senzorje prisotnosti/razdalje. Tezava obojih pristopov je kompleksnost prvotne nastavitve takega sistema in njegova fleksibilnost. Npr. da svetlobna zavesa pravilno deluje morajo biti vsi sprejemniki in oddajniki popolnoma poravnani, dobimo pa le binarni izhod, ki nam pove, ali se nekaj trenutno nahaja znotraj ravnine, ki jo svetlobna zavesa tvori med svojima polovicama. To nam da zelo omejeno informacijo o trenutni lokaciji cloveka, kar nam tudi zelo omeji mozne odzive. Praviloma se ob motnji v svetlobni zavesi ustavi postroj, nakar sistem potrebuje uporabnisko interakcijo za ponovni zacetek normalnega delovanja postroja. Uporaba ultrazvocnih senzorjev oddaljenosti, lahko dobimo vecstopenjsko informacijo o blizini dolocenega objekta, vendar moramo tocno vedeti, kje bi se ta objekt (v tem primeru clovek) lahko nahajal. Sistem se ne zaveda, kaj je objekt, cigar razdaljo merimo, kar nam lahko predstavi motnje v meritvah, ki pa vodijo do nezanesljivega delovanje.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\columnwidth]{Slike/light-curtain-application.jpg}
+    \caption{\label{svetlobna_zavesa} Primer svetlobne zavese v industriji.}
+\end{figure}
 
 Prednost uporabe strojnega vida napram tradicionalnim resitvam, kot so svetlobne zavese ali ultrazvocni merilniki razdalje je informacija o tem, kaj tocno se nahaja v delavnem prostoru in nasplosno vecji nabor podatkov, na bazi katerih lahko sprogramiramo kompleksnejse odzive.
 
@@ -170,7 +176,9 @@ Prednost uporabe strojnega vida napram tradicionalnim resitvam, kot so svetlobne
 \section{Robotski operacijski sistem (ROS)} \label{ROS}
 ROS (Robot Operating System) je odprtokodni operacijski sistem, zasnovan za uporabo v robotskih aplikacijah. Deluje na računalnikih z operacijskim sistemom Linux in je zasnovan na distribucijski arhitekturi. Torej, da je zasnovan za delovanje na različnih računalnikih, ki lahko delujejo, kot povezana celota - sistem. Ker je moja tema diplomske naloge nadgradnja obstojecega projekta na IJS, kjer sem opravljal obvezno prakso, sem moral resitev narediti kompatibilno z njihovo obstoječo arhitekturo projekta, kjer se vse nahaja v Docker datotekah, oz. Dockerfile-ih. Torej sem tudijaz svojo resitev zgradil znotraj Docker containerja, kar je tudi sicer priporocljivo v praksi, zaradi lazjega upravljanja s knjiznicami in gonilniki. 
 
-Arhitekturo ROS lahko razumemo na dveh razlicnih nivojih, ki ju lahko poenostavimo v:
+\textbf{TODO: Narisi shemo delovanja ROS}
+
+Arhitekturo ROS \cite{ROS_arhitektura} lahko razumemo na dveh razlicnih nivojih, ki ju lahko poenostavimo v:
 \begin{enumerate}
     \item  \label{file_lvl} \textbf{Datotecni (Filesystem) nivo} 
     
@@ -203,18 +211,67 @@ Arhitekturo ROS lahko razumemo na dveh razlicnih nivojih, ki ju lahko poenostavi
 
 \section{Program za zaznavanje položaja človeka - AlphaPose} \label{AlphaPose}
 AlphaPose je sistem, zmozen natancnega sledenja položaja celotnega človeškega telesa v realnem času \cite{AlphaPose_clanek}. Na področju detekcije položaja človeškega telesa je ta sistem uvedel 2 novi tehniki:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\columnwidth]{Slike/alphapic.png}
+    \caption{\label{AlphaPose} Primer AlphaPose obdelane slike}
+\end{figure}
+
     \begin{itemize}
-        \item  Simetrična integralna regresija (Symmetric Integral Keypoint Regression): Integralna regresija je metoda prikaza izhoda konvolucijske mreže [Glej: Razlaga pojmov \ref{cnn}], ki so jo avtorji v članku \cite{Sun_2018_ECCV} implementirali, kot zamenjavo za metodo "heatmap" [Glej: Razlaga pojmov \ref{heatmap}]. Ker ima metoda "heatmap" dva izstopajoča problema:
+        \item  \textbf{Simetrična integralna regresija (Symmetric Integral Keypoint Regression):} Integralna regresija je metoda prikaza izhoda konvolucijske mreže [Glej: Razlaga pojmov \ref{cnn}], ki so jo avtorji v članku \cite{regart} implementirali, kot zamenjavo za metodo "heatmap" [Glej: Razlaga pojmov \ref{heatmap}]. Ker ima metoda "heatmap" dva izstopajoča problema:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\columnwidth]{Slike/heatmap.jpg}
+    \caption{\label{heatmap} Heatmap vizualizacija.}
+\end{figure}
+
         \begin{enumerate}
-            \item \textbf{Neodvedljivost izhoda:} "Heatmap" način predstavitve distribucije verjetnosti razredov na slikah ni zvezen in posledično ni odvedljiv. "Heatmap" je diskretna distribucija verjetnosti, saj konvolucijske nevronske mreže (CNN) podajo izhod v obliki 2-D matrike verjetnosti. \cite{Sun_2018_ECCV}
+            \item \textbf{Ne-odvedljivost izhoda:} "Heatmap" način predstavitve distribucije verjetnosti razredov na slikah ni zvezen in posledično ni odvedljiv. "Heatmap" je diskretna distribucija verjetnosti, saj konvolucijske nevronske mreže (CNN) podajo izhod v obliki 2-D matrike verjetnosti. \cite{regart}
 
-            \item \textbf{Kvantizacijska napaka:} je pogojevana z načinom delovanja CNN in je neizogibna pri diskretizaciji. Kvantizacijska napaka rezultira v izgubi informacij, ki se lahko manifestira, kot slabo doloceni robovi objektov. \cite{Sun_2018_ECCV}
+            \item \textbf{Kvantizacijska napaka:} je pogojevana z načinom delovanja CNN in je neizogibna pri diskretizaciji. Kvantizacijska napaka rezultira v izgubi informacij, ki se lahko manifestira, kot slabo doloceni robovi objektov. \cite{regart}
         \end{enumerate}
-        Inregralna regresija je postopek predvidevanja lokacij sklepov, ki izvira iz "heatmap" predstavitve izhoda CNN. Predstavljen je kot, z verjetnostjo vsake lokacije, utežen integral vseh lokacij na "heatmap" grafu verjetnosti. Postopek poseduje prednosti direktnega pristopa s "heatmap" grafom in pristopa z regresijo \ref{regresija}, vendar ne poseduje slabih lastnosti obeh pristopov: racunska zahtevnost regresije, neodvodljivost "heatmap" grafa. \cite{Sun_2018_ECCV}. Simetrična integralna regresija je izboljšava integralne regresije, kjer nevronska mreza uposteva prostorsko simetrijo ključnih točk (sklepov) človeškega telesa. V članku \cite{AlphaPose_clanek} je navedena, kot prva metoda na bazi regresije, ki je enako natancna, kot metode s heatmap grafom, ob tem pa izničila kvantizacijsko napako te metode.
+        Integralna regresija je postopek razpoznavanja lokacij sklepov, ki izvira iz "heatmap" predstavitve izhoda CNN. Predstavljen je kot, z verjetnostjo vsake lokacije, utežen integral vseh lokacij na "heatmap" grafu verjetnosti. Postopek poseduje prednosti direktnega pristopa s "heatmap" grafom in pristopa z regresijo \ref{regresija}, vendar ne poseduje slabih lastnosti obeh pristopov: računska zahtevnost regresije, ne-odvedljivost "heatmap" grafa. \cite{regart}. Simetrična integralna regresija gradi na navadni integralni regresiji, s tem, da nevronska mreža upošteva prostorsko simetrijo ključnih točk (sklepov) človeškega telesa. V članku \cite{AlphaPose_clanek} je navedena, kot prva metoda na bazi regresije, ki je enako hitra in natančna, kot metode s heatmap grafom, ob tem pa izničila kvantizacijsko napako te metode.
 
-        \item
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\columnwidth]{Slike/hmvssikr.png}
+    \caption{\label{regresija} Vizualizacija kvantizacijske napake pristopa s heatmap-om in primerjava s simetrično integralsko regresijo.}
+\end{figure}
+
+        \item \textbf{Parametricna potlacitev nemaksimalnih vrednosti (Parametric Pose Non-Maximum-Suppression - PP-NMS):} Je algoritem za filtriranje redundantnih zaznavanj cloveskega polozaja. Narava zaznavalnikov polozaja je, da bodo poleg dejanskaga polozaja, ki ga zelimo zaznati, registrirali vec razlicic polozaja istega objekta. To se lahko zgodi zaradi delno prikritega objekta razpoznavanja ali hrupa (motenj) v sliki. Do uvedbe sistema AlphaPose so se ustvarjalci zaznavalnikov polozaja s tem problemom spopadali s povisanjem suverenosti [Glej: Razlaga pojmov \ref{suverenost}], potrebne za pozitiven izhod zaznavanja. Ta pristop rezultira v mnogih ne-zaznanih polozajih, kar je za aplikacijo zaznavanja vecjega stevila oseb nezazeljeno. Avtorji sistema AlphaPose so se problemu izbubljenih zaznavanj izognili z nizko nastavitvijo minimalne suverenosti, vendar so morali nekako popraviti problem zaznanih redundantnih polozajev. Algoritem PP-NMS za referenco izbere zaznan polozaj z najvisjim faktorjem suverenosti, polozaji, ki so po suverenosti blizu referencnemu so kandidati za eliminacijo. Odlocitev je sprejeta na bazi \textit{eliminacijskih kriterijev}, ki preverjata 2 faktorja.
+            \begin{enumerate}
+                \item \textbf{Podobnost:} Za dolocitev podobnosti med razlicnimi polozaji istega objekta zaznavanja oporabljamo kriterijsko funkcijo:
+                \begin{equation}
+                    f(P_i, P_j, \eta) = 1;[d(P_i, P_j | \Lambda, \lambda) \leq \eta]
+                \end{equation}
+                Kar pomeni, da je izhod enak 1, le v primeru, ko je razlika (razdalja) med polozajema $P_i$ in $P_j$ manjsa, od mejne vrednosti $\eta$. V tem primeru bo polozaj $P_i$ eliminiran zaradi redundance z referencnim polozajem $P_j$ \cite{AlphaPose_clanek}.\cite{AlphaPose_clanek}
+
+                \item \textbf{Oddaljenost polozajev:} S to funkcijo primerjamo razdaljo med okvirji, ki dolocajo, na katerem delu slike se nahaja objekt zaznavanja polozaja. Predpostavimo, da je $B_i$ okvir polozaja $P_i$.
+                \begin{equation}
+                K_sim(P_i, P_j | \sigma_1) = 
+                \left\{
+                    \begin{array}{lr}
+                        \sum_n \tanh\frac{c_i^n}{\sigma_1}, & \text{if } k_j^n\text{ is within} B(k_i^n) \\
+                        
+                        0, & \text{otherwise}
+                    \end{array}
+                \right\} 
+                \end{equation}
+                Kjer je $B(k_i^n)$ sredina okvirja. Operacija \verb|tanh| prefiltrira polozaje z nizkim faktorjem suverenosti. Ko imata vzajemna sklepa visok faktor suverenosti bo rezultat funkcije blizu 1, sicer pa 0 in polozaj $P_i$ bo eliminiran\cite{AlphaPose_clanek}.
+            \end{enumerate}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\columnwidth]{Slike/apfc.png}
+    \caption{\label{alphapose_arhitektura} Arhitektura sistema AlphaPose.}
+\end{figure}
         
     \end{itemize}
+
+\section{Robotska roka Franka Emika Panda} je kolaborativni robot s 7 prostostnimi stopnjami [Glej: Razlaga pojmov \ref{DOF}]. Razvit je bil kot prva izmed 3 stopenj vizije podjetja, ki ga je ustvarilo (Franka Emika). Njihova vizija narekuje napredovanje kolaborativnih robotov od raziskovalnih orodij, do robotskih sodelavcev v tovarnah, do končne faze robotskega pomočnika v vsakodnevnem življenju ostarelih in obolelih ljudi. Zavoljo enostavnosti uporabe so leta 2017 predstavili sistem "Panda power tool", ki laikom omogoča učenje novih nalog v nekaj minutah in brez kakršnihkoli programerskih izkušenj. Roka ima v zadnji člen vgrajene gumbe, s pomočjo katerih lahko učimo robota z demonstracijo, torej bo robot v delovanju oponašal gibe, skozi katerega ga je uporabnik vodil z rokami. Za upravljanje z robotom na nižjem, bolj granularnem nivoju so proizvajalci robota izdali paket "Panda research package", ki omogoča dvosmerno komunikacijo med računalnikom in robotsko roko v realnem času. To uporabniku omogoča uporabo namenskih krmilnikov in po meri narejenih robotskih aplikacij. Paket vsebuje knjiznice za komunikacijo z robotom prek razlicnih programskih jezikov in \verb|franka_ROS| vmesnik za komunikacijoprek ROS [Glej: \ref{ROS}] \cite{panda_website}
+
 
 
 \chapter{Razlaga pojmov} \label{razlaga_pojmov}
@@ -223,7 +280,22 @@ AlphaPose je sistem, zmozen natancnega sledenja položaja celotnega človeškega
 
     \item[Konvolucijske nevronske mreze:] \label{cnn}so vrsta nevronske mreže, namenjene pretežno za obdelavo slik. Glavni cilj konvolucijskih nevronskih mrež je naučiti se lokalne in globalne značilnosti vhodnih slik, kar omogoča, da lahko mreža klasificira, zaznava in segmentira objekte v slikah. Konvolucijske nevronske mreže uporabljajo konvolucijske plasti za izvajanje filtriranja vhodnih podatkov z matričnimi filtri (kernel). Filtri se običajno uporabljajo za zaznavanje robov, tekstur in drugih vizualnih značilnosti, ki so pomembne za prepoznavanje objektov na sliki. \cite{cnn_clanek}
 
-    \item[Regresija:] #TODO
+    \item[Suverenost (confidence):] \label{suverenost} V polju zaznavanja cloveskega polozaja je suverenost metrika, ki nam pove verjetnost pravilnosti zaznanega polozaja in je dobra kriterijska metrika za detektorje polozaja. Tipicno jo predstavimo, kot skalarno vrednost med 0 in 1, kjer 1 pomeni 100\% prepricanost v pravilnost zaznanega polozaja, 0 pa popolno prepricanost, da je polozaj napacno zaznan. Suverenost je izracunana na bazi vecih faktorjev, kot so: kvaliteta vhodne slike, kompleksnost oblike in teksture objekta zaznavanja in točnost algoritma. \cite{confidence_clanek}\cite{confidence_website}
+
+    \item[Regresija:] \textbf{TODO}
+
+    \item[Prostostna stopnja:] \label{DOF}V robotiki nam stevilo prostostnih stopenj pove s kolikimi neodvisnimi spremenljivkami lahko opisemo polozaj vrha robota. Opisujejo lahko translatorno ali rotacijsko gibanje. V vecini primerov je stevilo prostostnih stopenj robotskega manipiulatorja enako stevilu njegovih sklepov. \cite{DOF_website}
+
+    \item[Realni cas (Real-time):] \textbf{TODO}
+
+    
 \end{itemize}
+
+
+\cleardoublepage\phantomsection\addcontentsline{toc}{chapter}{Literatura} % vnos literature v kazalo
+
+% 1. način: BibTeX
+\bibliographystyle{ieeetrslo}
+\bibliography{literatura}
 
 \end{document}
