@@ -12,6 +12,8 @@
 \usepackage[greek,english,slovene]{babel} % seznam uporabljenih jezikov (zadnji na seznamu je primarni)
 \usepackage[utf8]{inputenc}
 \usepackage{subcaption}
+\usepackage{subfigure}
+\usepackage{wrapfig}
 
 % Default fixed font does not support bold face
 \DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
@@ -376,185 +378,42 @@ fontsize=\scriptsize
             'parent': 'R_knee','transj': [0, 0, -0.44], 'qx': np.ndarray(5), 'qy': np.ndarray(5), 'qz': np.ndarray(5), 
             'worldx': None, 'worldy': None, 'worldz': None},
 \end{minted}
-\caption{Primer opisa sklepa v namenskem slovarju}
-\end{listing}
-\newpage
-\begin{listing}[H]
-\begin{minted}
-[
-fontsize=\scriptsize
-]
-{python}
-def pose_CB(self, input):
-    if self.enablePose and self.camSel:
-        self.img_POSE = CvBridge().imgmsg_to_cv2(input, desired_encoding='rgb8')
-        
-        self.IMAGE_HEIGHT = self.img_POSE.shape[0]
-        self.IMAGE_WIDTH = self.img_POSE.shape[1]
-        self.pose = self.process("demo", self.img_POSE)
-        self.vis_POSE = self.vis(self.img_POSE, self.pose)
-    
-        if self.pose != None:
-            self.keypoints = self.pose['result'][0]['keypoints']
-    
-            self.secs = str(input.header.stamp)[:10]
-            self.nsecs = str(input.header.stamp)[10:]
-    
-            jIgnore = ['waist', 'torso', 'body']
-            tagIgnore = ['roll', 'pitch', 'yaw']
-            for key, joint in self.body.items():
-                keySegs = key.split('_')
-                if keySegs[0] not in jIgnore:
-                    if keySegs[-1] not in tagIgnore:
-                        joint['x'] = int(self.keypoints[16-i][0])
-                        joint['y'] = int(self.keypoints[16-i][1])
-            self.assignVirtualJoints()   
-            
-            if self.args.circles == True:
-                self.vis_POSE = cv2.circle(self.vis_POSE, (self.body['L_wrist']['x'], self.body['L_wrist']['y']), radius=10, color=(255, 0, 255), thickness=2)
-                self.vis_POSE = cv2.circle(self.vis_POSE, (self.body['R_wrist']['x'], self.body['R_wrist']['y']), radius=10, color=(255, 0, 255), thickness=2)
-            
-        else:
-            print(f"{Fore.RED} No pose detected...")
-            
-        if self.enableCamPose == True and self.colorTopic == '/realsense_top/color/image_raw':
-            self.vis_POSE = self.markerHandler(image=self.vis_POSE)
-        self.markerPub()
-        
-        self.out_POSE = CvBridge().cv2_to_imgmsg(self.vis_POSE, encoding = 'rgb8')
-        self.pub_POSE.publish(self.out_POSE)
-
-\end{minted}
-\caption{pose\_CB povratna funkcija}
+\caption{Primer opisa sklepa v namenskem slovarju body\_ dict}
 \end{listing}
 
     \item \textbf{Globinska slika:} Za pridobitev globinska slike je zadolzena povratna funkcija \verb|depth_CB|, ki prav tako kot prejsnja povratna funkcija najprej pretvori sliko iz formata slikovnega sporocila v \verb|openCV| format. V globinskih slikah s kamere realsense so globine posameznih pisklov predstavljene s sivinskimi nivoji, kjer je sivinski nivo piksla enak njegovi globini v milimetrih. Piksel oddaljen 5m bi torej imel sivinski nivo 5000, na 
     16-bitni lestvici kjer je 0 popolnoma crno, 65536 pa popolnoma belo. Vendar stereoskopske globinske kamere ustvarjajo artefakte v obrisih, kar se prikaze kot popolnoma crna obroba predmetov na sliki. Za minimizacijo vpliva teh artefaktov sem globinsko sliko pred uporabo zameglil. Glavna naloga te povratne funkcije je razbiranje globinskih vrednosti posameznih sklepov, funkcija kot vhod prejme slovar s polozaji posameznih sklepov, nato se skozi ta slovar sprehodi s pomocjo \verb|for| zanke in za vsak par (x,y) koordinat prebere sivinsko vrednost piksla s tema koordinatama in jo doda v slovar. 
-
-
-\begin{listing}[!ht]
-\begin{minted}
-[
-fontsize=\scriptsize
-]
-{python}
-def depth_CB(self, input):    
-    if self.enablePose and self.camSel:
-        self.img_DEPTH = CvBridge().imgmsg_to_cv2(input, desired_encoding='16UC1')
-        if self.img_DEPTH.shape[0] != self.IMAGE_HEIGHT:
-            self.img_blur_DEPTH = cv2.resize(self.img_DEPTH, dsize=[self.IMAGE_WIDTH, self.IMAGE_HEIGHT])
-            self.highRes = True
-        else:
-            self.img_blur_DEPTH = cv2.GaussianBlur(self.img_DEPTH, (5,5), cv2.BORDER_DEFAULT)
-            self.highRes = False
-
-        if self.camPose != None and self.camSel == True:
-            self.SendTransform2tf(p=self.camPose,q=self.camRot, parent_frame="/world", child_frame=self.tfFrame)
-                    
-        if self.pose != None:
-            for key, joint in self.body.items():
-                if joint['y'] >= self.IMAGE_HEIGHT:
-                    joint['z'] = self.img_blur_DEPTH[self.IMAGE_HEIGHT-1, int(joint['x'])]/1000
-                elif joint['x'] >= self.IMAGE_WIDTH:
-                    joint['z'] = self.img_blur_DEPTH[int(joint['y']), self.IMAGE_WIDTH-1]/1000
-                else:
-                    joint['z'] = self.img_blur_DEPTH[int(joint['y']), int(joint['x'])]/1000
-               
-                joint['qx'] = np.roll(joint['qx'], -1)
-                np.put(joint['qx'], 4, joint['x'])
-                        
-                joint['qy'] = np.roll(joint['qy'], -1)
-                np.put(joint['qy'], 4, joint['y'])
-                        
-                joint['qz'] = np.roll(joint['qz'], -1)
-                np.put(joint['qz'], 4, joint['z'])
-
-            print(f"{Fore.CYAN}LEFT:\nDEPTH: {self.body['L_wrist']['z']} | LOCATION: {self.body['L_wrist']['x'], self.body['L_wrist']['y']}")
-            print(f"{Fore.MAGENTA}RIGHT:\nDEPTH: {self.body['R_wrist']['z']} | LOCATION: {self.body['R_wrist']['x'], self.body['R_wrist']['y']}")
-
-            self.maxdepth_loc, self.mindepth_loc = np.unravel_index(np.argmax(self.img_blur_DEPTH),self.img_blur_DEPTH.shape), np.unravel_index(np.argmin(self.img_blur_DEPTH), self.img_blur_DEPTH.shape)
-
-
-            self.rounddepth_L = str(self.body['L_wrist']['z'])[:4]
-            self.rounddepth_R = str(self.body['L_wrist']['z'])[:4]
-
-            print(f"{Fore.GREEN} Max depth: {self.maxdepth_loc} {Fore.RED} | Min depth: {self.mindepth_loc}")
-            
-\end{minted}
-\end{listing}
-
-\begin{listing}[H]
-\begin{minted}
-[
-fontsize=\scriptsize
-]
-{python}
-    for key, joint in self.body.items():
-                jointx = self.GetMoveAvg(joint['qx'])        
-                jointy = self.GetMoveAvg(joint['qy'])
-                jointz = self.GetMoveAvg(joint['qz'])
-               
-                jointxyz = self.uv_to_XY(jointx, jointy, jointz)
-
-                
-
-                if joint['cf'] != None:
-                    self.SendTransform2tf(p=jointxyz, parent_frame=self.tfFrame, child_frame=(joint['cf']+'/rs'))
-                    if key == 'body':
-                        transToWorld = self.GetTrans('world',joint['cf']+'/rs')
-
-                        self.SendTransform2tf(p=transJoint, parent_frame=joint['pf'], child_frame=joint['cf'])
-                    else: 
-                        transToWorld = self.GetTrans('world',joint['cf']+'/rs')
-                
-                        worldPos = transToWorld.translation
-                        
-                        joint['worldx'] = -worldPos.x
-                        joint['worldy'] = -worldPos.y
-                        joint['worldz'] = -worldPos.z
-
-                        jointRot = self.getRot(joint=key)
-                        if joint['transj'] != None:
-                            transJoint = joint['transj']
-                        else:
-                            transJoint = [0,0,0]
-                        self.SendTransform2tf(p=transJoint, q=jointRot, parent_frame=joint['pf'], child_frame=joint['cf'])
-                        
-            if self.args.circles == True:
-                
-                self.circle_DEPTH = cv2.circle(self.img_blur_DEPTH, (self.body['L_wrist']['x'], self.body['L_wrist']['y']), radius=10, color=(255, 0, 255), thickness=2)
-                self.circle_DEPTH = cv2.circle(self.circle_DEPTH, (self.body['R_wrist']['x'], self.body['R_wrist']['y']), radius=10, color=(255, 0, 255), thickness=2)
-                self.out_DEPTH = CvBridge().cv2_to_imgmsg(self.circle_DEPTH, encoding = '16UC1')
-
-        else:
-            self.out_DEPTH = CvBridge().cv2_to_imgmsg(self.img_DEPTH, encoding = '16UC1')
-
-        self.pub_DEPTH.publish(self.out_DEPTH)
-        if self.colorTopic == '/realsense_top/color/image_raw':
-            self.visMarker()
-        self.getProximity()
-\end{minted}
-\caption{depth\_CB povratna funkcija}
-\end{listing}
 \end{itemize}
-\newpage
 
 
 \section{Dolocitev cloveskega polozaja} Velik del ideje za uporabo strojnega vida pri zagotavljanju varnosti v kolaborativni robotiki je bila hitra in neobcutljiva postavitev sistema. Pri uporabi npr. svetlobne zavese za zagotavljanje varnosti moramo biti pazljivi pri orientaciji modulov svetlobnih zaves, kjer moramo paziti na poravnanost in zagotavljanje jasnega vidnega polja med polovicama svetlobne zavese. Med drugim mrajo biti moduli postavljeni na specificni razdalji, ki jo je tezko spreminjati ob spremembi potreb robotske celice, kar je cedalje bolj perec problem v industriji, ki stremi k vedno bolj dinamicnemu in modularnemu pristopu do robotskega dela. Ta sprememba smernic je se posebej razvidna na hitro rastocem podrocju sodelujocih robotov. Za razliko od fiksnih sistemov s svetlobnimi zavesami ali detektorji cloveske prisotnosti, lahko z uporabo strojnega vida dolocamo clovesko oddaljenost od delovnega prostora robota iz prakticno katerekoli tocke, kjer sta razvidna tako clovek, kot celica. Tako lahko kamero za zaznavo postavimo ktakorekoc kamorkoli, kjer je ta pogoj izpolnjen, vendar pa to s seboj prinese tudi slabosti. Ko uporabniku omogocimo prosto premikanje kamere izgubimo pozicijsko tocnost fiksno postavljene kamere, kar je bistven podatek za kakrsnokoli merjenje razdalje na slikah.
 
-\subsection{Dolocitev polozaja kamere} Za kakrsnokoli zanesljivost podatkov o razdalji med clovekom in roboti je nujno potreben natancen podatek o polozaju kamere. Na mojem projektu sta bili na voljo 2 kameri, od katerih je ena bila namescena na koncu robotske roke, torej je dolocitev njenega polozaja bila trivialna, saj je bila dolocena s transformacijsko matriko od zadnjega clena robotske roke. Druga kamera je bila namescena pod stropom na lokaciji, ki bi jo bilo izjemno tezko dolociti z rocnimi meritvemi, zato sem se za dolocanje polozaja kamere odlocil uporabiti ArUco markerje. ArUco markerji so podvrsta takoimenovanih "fiducial" oziroma referencnih markerjev, to so racunalniku enostavno razpoznavni vzorci s tocno dolocenimi dimenzijami, na podlagi katerih lahko dolocimo velikost, oddaljenost in orientacijo predmeta na sliki. 
+\subsection{Dolocitev polozaja kamere} Za kakrsnokoli zanesljivost podatkov o razdalji med clovekom in roboti je nujno potreben natancen podatek o polozaju kamere. Na mojem projektu sta bili na voljo 2 kameri, od katerih je ena bila namescena na koncu robotske roke, torej je dolocitev njenega polozaja bila trivialna, saj je bila dolocena s transformacijsko matriko od zadnjega clena robotske roke. Druga kamera je bila namescena pod stropom na lokaciji, ki bi jo bilo izjemno tezko dolociti z rocnimi meritvemi, zato sem se za dolocanje polozaja kamere odlocil uporabiti ArUco markerje\ref{marker}. ArUco markerji so podvrsta takoimenovanih "fiducial" oziroma referencnih markerjev, to so racunalniku enostavno razpoznavni vzorci s tocno dolocenimi dimenzijami, na podlagi katerih lahko dolocimo velikost, oddaljenost in orientacijo predmeta na sliki. 
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\columnwidth]{Slike/markers.jpg}
-    \caption{\label{ArUco_markers} Primer ArUco markerjev}
+\begin{figure}
+     \centering
+      \begin{subfigure}{0.6\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Slike/marker_table.png}
+         \caption{Prikaz markerjev v vizualizacijskem okolju RViz}
+         \label{markertable}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}{0.3\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{Slike/markerz.jpg}
+         \caption{Primer ArUco markerjev}
+         \label{marker}
+     \end{subfigure}
+     \hfill
+        \label{markerji}
 \end{figure}
 
-Na robotsko delovno povrsino sem na lokacije, ki so bile stratesko izbrane za vidljivost med robotskim delovanjem s pomocjo 3D natisnjne sablone nalepil nabor ArUco markerjev, v program sem vnesel njihove polozaje glede na bazni koordinatini sistem robotske celice, nato pa jih zaznal z uporabo knjiznice openCV ArUco, ki je vrnila polozaje njihovih kotov glede na koordinatni sistem kamere (2D informacija). Iz znanih razdalj med markerji v realnem svetu in njihovih projekcij na senzor kamere sem nato z uporabo algoritma n-tockovne perspektive dolocil polozaj kamere glede na bazni koordinatni sistem kamere.
+Na robotsko delovno povrsino sem na lokacije, ki so bile stratesko izbrane za vidljivost med robotskim delovanjem s pomocjo 3D natisnjne sablone nalepil nabor ArUco markerjev (\ref{markertable}), v program sem vnesel njihove polozaje glede na bazni koordinatini sistem robotske celice, nato pa jih zaznal z uporabo knjiznice openCV ArUco, ki je vrnila polozaje njihovih kotov glede na koordinatni sistem kamere (2D informacija). Iz znanih razdalj med markerji v realnem svetu in njihovih projekcij na senzor kamere sem nato z uporabo algoritma n-tockovne perspektive dolocil polozaj kamere glede na bazni koordinatni sistem kamere.
 
 \begin{align} \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} &= \bf{A} \hspace{0.1em} \Pi \hspace{0.2em} ^{c}\bf{T}_w \begin{bmatrix} X_{w} \\ Y_{w} \\ Z_{w} \\ 1 \end{bmatrix} \\ \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} &= \begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \end{bmatrix} \begin{bmatrix} r_{11} & r_{12} & r_{13} & t_x \\ r_{21} & r_{22} & r_{23} & t_y \\ r_{31} & r_{32} & r_{33} & t_z \\ 0 & 0 & 0 & 1 \end{bmatrix} \begin{bmatrix}\label{PNP} X_{w} \\ Y_{w} \\ Z_{w} \\ 1 \end{bmatrix} \end{align}
 
-Zgornja funkcija je transformacija tocke iz koordinatnega sistema sveta v koordinatni sistem kamere, kjer so \begin{math} X_W, Y_W \end{math} in \begin{math} Z_W\end{math} koordinate tocke v baznem koordinatnem sistemu, \begin{math} f_x \end{math} in \begin{math} f_y \end{math} goriscni razdalji kamere, \begin{math} c_x \end{math} in \begin{math} c_y \end{math} pa opticna centra koordinatnega sistema kamere. \begin{math} U \end{math} in \begin{math} V \end{math} predstavljata lokacijo projekcije tocke na ravnino senzorja kamere, \begin{math} r_11 \end{math} do \begin{math} r_33 \end{math} predstavljajo rotacijsko matriko transformacije, \begin{math} t_x. t_y \end{math} in \begin{math} t_z \end{math} pa so komponente translacijskega vektorja od tocke v koordinatnem sistemu sveta do koordinatnega sstema kamere.
+Zgornja funkcija \ref{PNP} je transformacija tocke iz koordinatnega sistema sveta v koordinatni sistem kamere, kjer so \begin{math} X_W, Y_W \end{math} in \begin{math} Z_W\end{math} koordinate tocke v baznem koordinatnem sistemu, \begin{math} f_x \end{math} in \begin{math} f_y \end{math} goriscni razdalji kamere, \begin{math} c_x \end{math} in \begin{math} c_y \end{math} pa opticna centra koordinatnega sistema kamere. \begin{math} U \end{math} in \begin{math} V \end{math} predstavljata lokacijo projekcije tocke na ravnino senzorja kamere, \begin{math} r_11 \end{math} do \begin{math} r_33 \end{math} predstavljajo rotacijsko matriko transformacije, \begin{math} t_x. t_y \end{math} in \begin{math} t_z \end{math} pa so komponente translacijskega vektorja od tocke v koordinatnem sistemu sveta do koordinatnega sistema kamere.
 
 Za dolocitev polozaja kamere je potreben inverz zgornje funkcije, vendar nam le-ta lahko vrne dvoumno resitev, ce vanjo vnesemo le minimalno stevilo tock (3). Ta pojav je znan kot dvoumnost 3-tockovne perspektive, za resitev tega fenomena pa sem uporabil 6 markerjev, kar je rezultiralo v sorazmerno natancni enolicni resitvi. Vendar pa je zaradi locljivosti kamere in relativno velike oddaljenosti rezultat bil nekoliko zamaknjen, zato sem napisal funkcijo, ki je poskrbela, da se zaznani polozaji markerjev ujemajo z znanimi.
 
@@ -599,10 +458,89 @@ def CamPoseCorrection(self, initial_pose:list)->list:
         
         return [initial_pose[0]+mx, initial_pose[1]+my, initial_pose[2]+mz]
 \end{minted}
-\caption{Funkcija za samodejno korekcijo polozaja kamere}
+\caption{Funkcija CamPoseCorrection() za samodejno korekcijo polozaja kamere}
 \end{listing}
 
+Funkcija \verb|CamPoseCorrection()| doloci sredisca zaznanih markerjev in z globinsko kamero izmeri razdaljo do njih, nato njihove koordinate iz koordinatnega sistema kamere transformira v koordinatni sistem robotske celice, ter njihove vizualno dolocene lokacije objavi na ROS temo, nato pa izracuna napako med transformiranimi lokacijami vidno zaznanih markerjev in dejanskimi lokacijami markerjev. Funkcija za tem doloci povprecen pogresek lokacije med vsemi vizualno zaznanimi markerji za vsako os ter polozaj kamere zamakne za te izracunane srednje vrednosti pogreskov, kar lahko vidimo v \verb|return| izjavi funkcije.
 
+Ko je polozaj kamere tocno dolocen, lahko program pricne s sporocanjem lokacije posameznih sklepov, katerih lokacije na sliki nam vrne orodje AlphaPose\ref{AlphaPose}, nato pa njihove globinske vrednosti poiscemo na globinski sliki.
+
+\section{Prikaz clovesekga modela v vizualizacijskem okolju RViz}
+Originalna zamisel za zagotavljanja varnosti je bila uporaba planirnega orodja M\textit{Moveit}, ki omogoca nacrtovanje trajektorij z upostevanjem predmetov v robotovi okolici, ki jih vnesemo v vizualizacijsko okolje RViz. To delovanje omogoca nacrtovanje trajektorij z izogibanjem trcenj s predmeti ali, v nasem primeru, osebami v okolici robota. Za izogibanje predmeta v robotski okolici moramo v vizualizacijsko okolje RViz vnesti polozaj objekta in njegov model v formatu URDF (Unified Robotics Description Format), ki vsebuje dimenzije objekta in njrgove omejitve za trcenja, okoli teh parametrov nato modul \textit{Moveit} nacrtuje trajektorije.
+
+\subsection{Izracun kota sklepov}
+\begin{wrapfigure}[14]{r}{0.3\textwidth}
+  \begin{center}
+    \includegraphics[width=0.3\textwidth]{Slike/rviz_human.png}
+  \end{center}
+  \caption{URDF opis cloveka}
+\end{wrapfigure}
+Uporabil sem cloveski URDF model z github strani organizacije, ki stoji za frameworkom ROS4HRI (ROS for Human-Robot Interaction) \cite{ros4hri}. Model za delovanje potrebuje kartezicno prostorsko koordinato za izvorno tocko, oziroma t.i. \textit{Parent Frame}, ki je poimenovana \verb|body_default|, funkcija \verb|assignVirtualJoints()| jo umesti med boke, ki jih zazna sistem AlphaPose. Poleg kartezicne lokacije izvorne tocke pa potrebuje podatke o kotih posameznih sklepov, npr. ramen in kolkov. Za izracun teh kotov sem napisal funkcijo, ki sklepom pripise kote na bazi razdalj med njimi po specificnih oseh. Ramena in kolki imajo 3 prostostne stopnje, koordinate zanje prejemajo v formatu RPY (Roll, Pitch, Yaw), kjer je vsaka prostostna stopnja "child frame" prejsnje, 
+
+\newpage
+torej je njen kot pogojevan s kotom prejsnje prostostne stopnje tega zgloba. Ker ROSPy TF (transformation frame) funkcije operirajo z orientacijami v sistemu Quaternion, moramo izracunane kote iz rotacijskih matrik pretvoriti v Qaternion \ref{quaternion}
+
+
+
+
+
+\begin{listing}[H]
+    \begin{minted}
+[
+fontsize=\scriptsize
+]
+{python}
+def getRot(self, joint:str) -> np.ndarray:
+    """
+    This function calculates joint angles for the URDF human model from
+    the calculated/measured locations of hte keypoints
+
+    Args
+    ----
+        joint(str) : Specifies for which joint the angle is being calculated
+
+    Returns
+    -------
+        outRot(np,ndarray) : Rotation matrix of the specified joint
+    """
+    curJoint = self.body[joint]
+    
+    if curJoint['lower_j'] != None:
+        lowJoint = self.body[curJoint['lower_j']]
+        curPos = [curJoint['worldx'], curJoint['worldy'], curJoint['worldz']]
+        lowPos = [lowJoint['worldx'], lowJoint['worldy'], lowJoint['worldz']]
+        
+        if curJoint['rot_x']:
+            dx = curPos[0] - lowPos[0]
+            dy = curPos[1] - lowPos[1]
+            rot = math.atan(dx/dy)
+            if curJoint['neg']:
+                rot = -rot
+            outRot = r2q(rot_x(rot))
+        
+        elif curJoint['rot_y']:
+            dz = curPos[2] - lowPos[2]
+            dy = curPos[1] - lowPos[1]
+            rot = math.atan(dz/dy)
+            if curJoint['neg']:
+                rot = -rot
+            outRot = r2q(rot_y(rot))
+        
+        elif curJoint['rot_z']:
+            dx = curPos[0] - lowPos[0]
+            dz = curPos[2] - lowPos[2]
+            rot = math.atan(dx/dz)
+            if curJoint['neg']:
+                rot = -rot
+            outRot = r2q(rot_z(rot))
+        else:
+            outRot = r2q(np.eye(3))
+    else:
+        outRot = r2q(np.eye(3))
+
+    return outRot
+    \end{minted}
+\end{listing}
 
 
 
@@ -624,6 +562,7 @@ def CamPoseCorrection(self, initial_pose:list)->list:
 
     \item \textbf[ROS ovoj:] \label{ROS_wrapper} \textbf{TODO}
 
+    \item \textbf[Quaternion:] \label{quaternion} \textbf{TODO}
 
 
     \item \textbf{Prostostna stopnja:} \label{DOF}V robotiki nam stevilo prostostnih stopenj pove s kolikimi neodvisnimi spremenljivkami lahko opisemo polozaj vrha robota. Opisujejo lahko translatorno ali rotacijsko gibanje. V vecini primerov je stevilo prostostnih stopenj robotskega manipiulatorja enako stevilu njegovih sklepov. \cite{DOF_website}
